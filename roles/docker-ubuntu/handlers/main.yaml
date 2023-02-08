@@ -1,0 +1,10 @@
+- name: restart_ufw
+  ansible.builtin.service:
+    name: ufw
+    state: restarted
+
+- name: start_docker
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: yes

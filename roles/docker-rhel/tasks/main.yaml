@@ -1,0 +1,38 @@
+- name: setup 2377 tcp firewall rule
+  ansible.posix.firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - 2377/tcp
+    - 2377/udp
+    - 7946/tcp
+    - 7946/udp
+    - 4789/udp
+  notify: reload_firewalld
+
+- name: "Remove old installations"
+  ansible.builtin.yum:
+    name: "{{ packages }}"
+    state: absent
+
+- name: "Install yum-utils"
+  ansible.builtin.yum:
+    name: yum-utils
+    state: present
+
+- name: Download Docker-ce repo file
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/
+    mode: '0644'
+
+- name: Install docker engine
+  ansible.builtin.yum:
+    name: 
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+    state: present
+  notify: start_docker

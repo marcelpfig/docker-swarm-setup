@@ -1,0 +1,15 @@
+---
+- name: Setup docker node as worker
+  hosts: worker
+  become: True
+  gather_facts: True
+
+  tasks:
+    - name: copy join file from host to remote
+      ansible.builtin.copy:
+        src: ./join/join.sh
+        dest: /root/join.sh
+        mode: '0700'
+
+    - name: run join file on remote
+      ansible.builtin.shell: /root/join.sh

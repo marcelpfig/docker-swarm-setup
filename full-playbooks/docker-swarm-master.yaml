@@ -1,0 +1,25 @@
+---
+- name: Setup docker node as master
+  hosts: master
+  become: True
+  gather_facts: True
+
+  tasks:
+    - name: Destroy cluster before starting again
+      ansible.builtin.command: docker swarm leave --force
+
+    - name: Init cluster swarm
+      ansible.builtin.shell: docker swarm init | grep "docker swarm join --token" > /root/join.sh
+
+    - name: move join file from remote to host
+      ansible.builtin.fetch:
+        src: /root/join.sh
+        dest: ./join
+
+    - name: Organize files
+      ansible.builtin.shell: |
+                            cp join/{{ inventory_hostname }}/root/join.sh join/
+                            rm -rf join/{{ inventory_hostname }}
+      delegate_to: localhost
+      become: False
+      

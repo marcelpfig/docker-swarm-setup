@@ -1,0 +1,10 @@
+- name: reload_firewalld
+  ansible.builtin.service:
+    name: firewalld
+    state: reloaded
+
+- name: start_docker
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: yes

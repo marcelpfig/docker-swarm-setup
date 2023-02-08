@@ -1,0 +1,18 @@
+- name: Install docker Ubuntu/Debian
+  become: True
+  hosts: all
+  roles:
+    - { role: docker-ubuntu, when: ansible_facts.os_family|lower == "debian" }
+    - { role: docker-rhel, when: ansible_facts.os_family|lower == "redhat" }
+
+- name: Setup Swarm Master node
+  become: True
+  hosts: master
+  roles:
+    - swarm-master-setup
+
+- name: Setup Swam Worker node
+  become: True
+  hosts: worker
+  roles:
+    - swarm-worker-setup
